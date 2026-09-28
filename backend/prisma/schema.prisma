@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         String     @default("USER") // USER or ADMIN
+  avatar       String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  donations    Donation[]
+}
+
+model HeritageSite {
+  id                 String              @id @default(uuid())
+  name               String
+  location           String
+  description        String
+  historicalInfo     String
+  currentCondition   String
+  period             String              @default("Ancient")
+  fundingGoal        Float               @default(0)
+  fundingRaised      Float               @default(0)
+  preservationStatus String              @default("At Risk") // At Risk, Under Restoration, Restored, Critical
+  heroImage          String?
+  thenImage          String?
+  nowImage           String?
+  galleryImages      String?             // JSON array of image URLs
+  modelUrl           String?
+  audioUrl           String?
+  latitude           Float?
+  longitude          Float?
+  supporters         Int                 @default(0)
+  featured           Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  components         HeritageComponent[]
+  donations          Donation[]
+  vrExperiences      VRExperience[]
+  fundTransactions   FundTransaction[]
+}
+
+model HeritageComponent {
+  id              String   @id @default(uuid())
+  siteId          String
+  site            HeritageSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  name            String
+  description     String
+  type            String   @default("stone") // pillar, wall, door, arch, statue, stone, roof
+  restorationCost Float    @default(0)
+  amountFunded    Float    @default(0)
+  condition       String   @default("Deteriorating") // Good, Fair, Deteriorating, Critical
+  status          String   @default("Needs Restoration") // Needs Restoration, Under Restoration, Restored
+  positionX       Float?   // For interactive map placement
+  positionY       Float?
+  positionZ       Float?
+  adoptedBy       String?  // JSON array of user IDs
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  donations       Donation[]
+}
+
+model Donation {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  siteId          String
+  site            HeritageSite @relation(fields: [siteId], references: [id])
+  componentId     String?
+  component       HeritageComponent? @relation(fields: [componentId], references: [id])
+  amount          Float
+  currency        String   @default("INR")
+  razorpayOrderId String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  paymentStatus   String   @default("pending") // pending, success, failed
+  donationType    String   @default("general") // general, adoption, restoration
+  message         String?
+  anonymous       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VRExperience {
+  id           String       @id @default(uuid())
+  siteId       String
+  site         HeritageSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  modelUrl     String?
+  narrationUrl String?
+  description  String?
+  hotspots     String?      // JSON array of hotspot data
+  settings     String?      // JSON settings for VR viewer
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model FundTransaction {
+  id          String       @id @default(uuid())
+  siteId      String
+  site        HeritageSite @relation(fields: [siteId], references: [id])
+  amount      Float
+  type        String       @default("donation_received") // donation_received, fund_allocated, restoration_started, restoration_completed
+  description String
+  createdAt   DateTime     @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("unread") // unread, read, replied
+  createdAt DateTime @default(now())
+}
