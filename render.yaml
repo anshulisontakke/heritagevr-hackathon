@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: heritagevr
+    env: node
+    buildCommand: "cd backend && npm install && cd ../frontend && npm install && npm run build"
+    startCommand: "cd backend && npm run db:setup && npm start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: "file:./dev.db"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: UPLOAD_DIR
+        value: "uploads"
