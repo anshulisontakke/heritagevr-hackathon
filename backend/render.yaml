@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: heritagevr-api
+    env: node
+    plan: free
+    rootDir: .
+    buildCommand: npm install && npx prisma generate && npx prisma db push
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: FRONTEND_URL
+        value: https://heritagevr-frontend.vercel.app
+      - key: UPLOAD_DIR
+        value: uploads
