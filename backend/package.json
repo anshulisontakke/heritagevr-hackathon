@@ -1,0 +1,32 @@
+{
+  "name": "heritagevr-backend",
+  "version": "1.0.0",
+  "description": "HeritageVR Backend API - Heritage Preservation Platform",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "db:generate": "npx prisma generate",
+    "db:push": "npx prisma db push",
+    "db:seed": "node prisma/seed.js",
+    "db:setup": "npx prisma db push && node prisma/seed.js",
+    "db:studio": "npx prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "razorpay": "^2.9.4",
+    "express-validator": "^7.2.0",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "prisma": "^6.0.0"
+  }
+}
